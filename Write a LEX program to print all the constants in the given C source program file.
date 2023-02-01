@@ -1,0 +1,34 @@
+%{
+#include <stdio.h>
+#include <ctype.h>
+
+int line_number = 1;
+%}
+
+%%
+
+[ \t]+
+
+\"[^\"]*\"            printf("line %d: string constant %s\n", line_number, yytext);
+
+\'[^\']*\'            printf("line %d: character constant %s\n", line_number, yytext);
+
+[0-9]+                printf("line %d: integer constant %s\n", line_number, yytext);
+
+[0-9]+\.[0-9]+|\.[0-9]+ printf("line %d: float constant %s\n", line_number, yytext);
+
+.|\n                  /* count lines */
+{ line_number++; }
+
+%%
+
+int main()
+{
+    yylex();
+    return 0;
+}
+
+int yywrap()
+{
+    return 1;
+}
